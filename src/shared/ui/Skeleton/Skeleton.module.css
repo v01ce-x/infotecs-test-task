@@ -1,0 +1,41 @@
+.skeleton {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+.skeleton::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 40%;
+    height: 100%;
+
+    background: linear-gradient(
+            90deg,
+            transparent,
+            var(--color-shimmer-blur),
+            transparent
+    );
+
+    animation: singleWave 1.6s infinite linear;
+    pointer-events: none;
+}
+
+.skeleton__cell {
+    color: transparent;
+    padding: 12px;
+    background-color: var(--color-shimmer-base);
+    background-clip: content-box;
+    line-height: 1;
+}
+
+@keyframes singleWave {
+    0% {
+        transform: skewX(-20deg) translateX(-150%);
+    }
+    100% {
+        transform: skewX(-20deg) translateX(300%);
+    }
+}

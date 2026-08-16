@@ -1,5 +1,11 @@
-const App = () => {
-  return
-}
+import { UsersTable } from '@/features/users';
 
-export default App
+const App = () => {
+  return (
+    <div className="wrapper">
+      <UsersTable />
+    </div>
+  );
+};
+
+export default App;
