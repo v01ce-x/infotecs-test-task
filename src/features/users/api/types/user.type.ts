@@ -78,3 +78,10 @@ export interface ApiUsersResponse {
   total: number;
   users: User[];
 }
+
+export type SortingVariants = 'asc' | 'desc' | 'none';
+
+export interface Sort {
+  key: string;
+  direction: SortingVariants;
+}

@@ -1,23 +1,16 @@
 import { useEffect, useState } from 'react';
-import { type ApiUsersResponse, getUsers, type User } from '@/features/users';
+import {
+  type ApiUsersResponse,
+  getUsers,
+  LIMIT_QUERY,
+  type Sort,
+  TABLE_HEADERS,
+  type User,
+} from '@/features/users';
 import styles from './UsersTable.module.css';
 import { TitleTable, UserCell } from '@/shared/ui';
 import Skeleton from '@/shared/ui/Skeleton/Skeleton.tsx';
 import { useInView } from 'react-intersection-observer';
-
-const TABLE_HEADERS = {
-  lastName: 'Фамилия',
-  firstName: 'Имя',
-  maidenName: 'Отчество',
-  age: 'Возраст',
-  gender: 'Пол',
-  phone: 'Номер телефона',
-  email: 'Email',
-  ['address.country']: 'Страна',
-  ['address.city']: 'Город',
-};
-
-const LIMIT_QUERY = 30;
 
 const UsersTable = () => {
   const [allUsers, setAllUsers] = useState<User[] | []>([]);
@@ -26,22 +19,30 @@ const UsersTable = () => {
   const [totalUsers, setTotalUsers] = useState<number>(100);
   const [totalPage, setTotalPage] = useState(0);
 
+  const [sorting, setSorting] = useState<Sort>({
+    key: '',
+    direction: 'none',
+  });
+
   const { ref, inView } = useInView({
     threshold: 1,
     triggerOnce: false,
   });
 
-  const handleUsersLoad = (data: ApiUsersResponse) => {
+  const handleUsersLoad = (data: ApiUsersResponse, isReset = false) => {
     setTotalUsers(data.total);
 
     if (totalUsers - LIMIT_QUERY * (totalPage + 1) <= 0) setTotalPage(-1);
 
     const users = data.users;
 
-    if (users) {
+    if (users && !isReset) {
       setAllUsers([...allUsers, ...users]);
-      setIsLoadingUser(false);
+    } else if (users && isReset) {
+      setAllUsers(users);
     }
+
+    setIsLoadingUser(false);
   };
 
   useEffect(() => {
@@ -51,8 +52,12 @@ const UsersTable = () => {
   }, [inView]);
 
   useEffect(() => {
-    getUsers(totalPage).then((data) => handleUsersLoad(data));
+    getUsers(totalPage, sorting).then((data) => handleUsersLoad(data));
   }, [totalPage]);
+
+  useEffect(() => {
+    getUsers(totalPage, sorting).then((data) => handleUsersLoad(data, true));
+  }, [sorting.key, sorting.direction]);
 
   return (
     <>
@@ -60,7 +65,13 @@ const UsersTable = () => {
         <thead>
           <tr>
             {Object.entries(TABLE_HEADERS).map((header) => (
-              <TitleTable key={header[0]} title={header[1]} />
+              <TitleTable
+                key={header[0]}
+                id={header[0]}
+                title={header[1]}
+                sorting={sorting}
+                onClick={(sorting: Sort) => setSorting(sorting)}
+              />
             ))}
           </tr>
         </thead>
@@ -79,7 +90,11 @@ const UsersTable = () => {
           </tbody>
         )}
       </table>
-      {totalPage !== -1 && <div ref={ref} className={styles.trigger} />}
+      {totalPage !== -1 && (
+        <div ref={ref} className={styles.trigger}>
+          Загрузка...
+        </div>
+      )}
     </>
   );
 };

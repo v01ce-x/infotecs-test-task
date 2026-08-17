@@ -1,0 +1,80 @@
+.cell {
+    position: relative;
+}
+
+.cell__wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    column-gap: 4px;
+    padding: 8px 12px;
+
+    -webkit-user-select: none;
+    cursor: pointer;
+    transition: 0.3s;
+
+    &:hover {
+        background-color: var(--color-surface-hover);
+    }
+
+    &:active {
+        background-color: var(--color-surface);
+    }
+}
+
+.sorting__button {
+    width: 20px;
+    height: 20px;
+
+    fill: var(--color-text-muted);
+
+    border-radius: 4px;
+    transition: 0.5s;
+}
+
+.sorting__menu {
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    display: grid;
+
+    width: 100%;
+    min-width: 150px;
+
+    background-color: var(--color-surface);
+
+    padding: 8px;
+    row-gap: 8px;
+
+    border-radius: 8px;
+}
+
+.sorting__value {
+    padding: 8px 0;
+
+    border-radius: 8px;
+    transition: 0.3s;
+    cursor: pointer;
+
+    &:hover {
+        background-color: var(--color-surface-hover);
+    }
+
+    &:active {
+        background-color: var(--color-surface);
+    }
+}
+
+.sorting__desc {
+    fill: var(--color-text-muted);
+}
+
+.sorting__asc {
+    fill: var(--color-text-muted);
+}
+
+.sorting__none {
+    fill: var(--color-border);
+}
