@@ -83,5 +83,5 @@ export type SortingVariants = 'asc' | 'desc' | 'none';
 
 export interface Sort {
   key: string;
-  direction: SortingVariants;
+  value: SortingVariants;
 }

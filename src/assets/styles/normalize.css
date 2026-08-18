@@ -7,3 +7,10 @@
 table {
     border-collapse: collapse;
 }
+
+input {
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--color-text-main);
+}

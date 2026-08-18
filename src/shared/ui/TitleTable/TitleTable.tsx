@@ -21,22 +21,26 @@ const TitleTable = (props: Props) => {
   const [isOpenSorting, setIsOpenSorting] = useState(false);
   const cellRef = useRef<HTMLTableCellElement | null>(null);
 
-  const toggleSorting = () => {
-    setIsOpenSorting(!isOpenSorting);
-  };
-
   const getSortIconClass = (direction: string) => {
-    return sorting.key === id && sorting.direction === direction
+    return sorting.key === id && sorting.value === direction
       ? styles.sorting__asc
       : styles.sorting__none;
   };
 
   const setSorting = (direction: SortingVariants) => {
-    onClick({
-      key: id,
-      direction: direction as SortingVariants,
-    });
-    toggleSorting();
+    if (direction === 'none') {
+      onClick({
+        key: '',
+        value: direction,
+      });
+    } else {
+      onClick({
+        key: id,
+        value: direction,
+      });
+    }
+
+    setIsOpenSorting(false);
   };
 
   useEffect(() => {
@@ -44,7 +48,7 @@ const TitleTable = (props: Props) => {
 
     const handleClickOutside = (event: MouseEvent) => {
       if (cellRef.current && !cellRef.current.contains(event.target as Node)) {
-        toggleSorting();
+        setIsOpenSorting(false);
       }
     };
 
@@ -57,7 +61,10 @@ const TitleTable = (props: Props) => {
     <>
       {SORTING_FIELDS.find((field) => field === id) ? (
         <th className={styles.cell} ref={cellRef}>
-          <div className={styles.cell__wrapper} onClick={toggleSorting}>
+          <div
+            className={styles.cell__wrapper}
+            onClick={() => setIsOpenSorting(!isOpenSorting)}
+          >
             <span></span>
             <span>{title}</span>
             <svg

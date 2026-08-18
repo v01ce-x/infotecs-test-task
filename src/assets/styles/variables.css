@@ -8,7 +8,8 @@
     --color-shimmer-base: #e2e8f0;
     --color-shimmer-blur: #f1f5f9;
 
-    --color-primary: #0ea5e9;
+    --color-primary: #1abc9f;
+    --color-primary-soft: rgba(26, 188, 159, 0.14);
     --color-error: #ef4444;
 }
 

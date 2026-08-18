@@ -1,10 +1,11 @@
-import type { ApiUsersResponse, Sort } from '@/features/users';
+import { LIMIT_QUERY } from '@/features/users';
+import { apiFetch } from '@/shared/api';
 
-const limit = 30;
+const skipUser = (totalPage: number) => {
+  return totalPage === 0 ? '' : `skip=${totalPage * LIMIT_QUERY}`;
+};
 
 export const userService = {
-  users: (totalPage: number, sorting: Sort) =>
-    fetch(
-      `${import.meta.env.VITE_API_URL}/users?skip=${totalPage * limit}&sortBy=${sorting.key}&order=${sorting.direction}`,
-    ).then<ApiUsersResponse>((res) => res.json()),
+  users: (totalPage: number, queryParam: string) =>
+    apiFetch('/users', skipUser(totalPage), queryParam),
 };

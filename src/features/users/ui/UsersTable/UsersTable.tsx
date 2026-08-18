@@ -8,91 +8,124 @@ import {
   type User,
 } from '@/features/users';
 import styles from './UsersTable.module.css';
-import { TitleTable, UserCell } from '@/shared/ui';
+import { FieldInput, TitleTable, UserCell } from '@/shared/ui';
 import Skeleton from '@/shared/ui/Skeleton/Skeleton.tsx';
 import { useInView } from 'react-intersection-observer';
+import { useDebounce } from '@/shared/hooks';
 
 const UsersTable = () => {
-  const [allUsers, setAllUsers] = useState<User[] | []>([]);
+  const [allUsers, setAllUsers] = useState<User[]>([]);
   const [isLoadingUser, setIsLoadingUser] = useState(true);
 
-  const [totalUsers, setTotalUsers] = useState<number>(100);
   const [totalPage, setTotalPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
 
-  const [sorting, setSorting] = useState<Sort>({
+  const [sortingParam, setSortingParam] = useState<Sort>({
     key: '',
-    direction: 'none',
+    value: 'none',
   });
 
+  const [filterParam, setFilterParam] = useState('');
+
+  const debounceFilter = useDebounce(filterParam, 500);
+
   const { ref, inView } = useInView({
-    threshold: 1,
+    threshold: 0.5,
     triggerOnce: false,
   });
 
-  const handleUsersLoad = (data: ApiUsersResponse, isReset = false) => {
-    setTotalUsers(data.total);
+  const handleUsersLoad = (data: ApiUsersResponse, page: number) => {
+    const users = data.users ?? [];
 
-    if (totalUsers - LIMIT_QUERY * (totalPage + 1) <= 0) setTotalPage(-1);
-
-    const users = data.users;
-
-    if (users && !isReset) {
-      setAllUsers([...allUsers, ...users]);
-    } else if (users && isReset) {
+    if (page === 0) {
       setAllUsers(users);
+    } else {
+      setAllUsers((prev) => [...prev, ...users]);
     }
 
-    setIsLoadingUser(false);
+    setHasMore(data.total > LIMIT_QUERY * (page + 1));
   };
 
   useEffect(() => {
-    if (inView && totalPage !== -1) {
+    if (inView && hasMore && !isLoadingUser) {
       setTotalPage((prev) => prev + 1);
     }
-  }, [inView]);
+  }, [inView, isLoadingUser]);
 
   useEffect(() => {
-    getUsers(totalPage, sorting).then((data) => handleUsersLoad(data));
-  }, [totalPage]);
+    setAllUsers([]);
+    setTotalPage(0);
+    setHasMore(true);
+    setIsLoadingUser(true);
+  }, [debounceFilter, sortingParam.key, sortingParam.value]);
 
   useEffect(() => {
-    getUsers(totalPage, sorting).then((data) => handleUsersLoad(data, true));
-  }, [sorting.key, sorting.direction]);
+    let cancelled = false;
+
+    setIsLoadingUser(true);
+
+    getUsers(totalPage, sortingParam, debounceFilter)
+      .then((data) => {
+        if (cancelled) return;
+
+        handleUsersLoad(data, totalPage);
+      })
+      .catch((error) => {
+        if (cancelled) return;
+
+        console.error(error);
+      })
+      .finally(() => {
+        setIsLoadingUser(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [totalPage, debounceFilter, sortingParam.key, sortingParam.value]);
 
   return (
     <>
+      <div>
+        Поиск по таблице. Только поля ФИО и email
+        <FieldInput
+          onChange={(newFilterValue: string) => setFilterParam(newFilterValue)}
+        />
+      </div>
+
       <table className={styles.table}>
         <thead>
           <tr>
-            {Object.entries(TABLE_HEADERS).map((header) => (
+            {Object.entries(TABLE_HEADERS).map(([id, title]) => (
               <TitleTable
-                key={header[0]}
-                id={header[0]}
-                title={header[1]}
-                sorting={sorting}
-                onClick={(sorting: Sort) => setSorting(sorting)}
+                key={id}
+                id={id}
+                title={title}
+                sorting={sortingParam}
+                onClick={(newSorting: Sort) => setSortingParam(newSorting)}
               />
             ))}
           </tr>
         </thead>
-        {isLoadingUser ? (
+
+        {isLoadingUser && totalPage === 0 ? (
           <Skeleton />
         ) : (
           <tbody>
-            {allUsers &&
-              allUsers.map((user) => (
-                <tr key={user.id}>
-                  {Object.entries(TABLE_HEADERS).map((cell) => (
-                    <UserCell key={cell[0]} id={cell[0]} user={user} />
-                  ))}
-                </tr>
-              ))}
+            {allUsers.map((user) => (
+              <tr key={user.id}>
+                {Object.entries(TABLE_HEADERS).map(([id]) => (
+                  <UserCell key={id} id={id} user={user} />
+                ))}
+              </tr>
+            ))}
           </tbody>
         )}
       </table>
-      {totalPage !== -1 && (
+
+      {hasMore && allUsers.length > 0 && (
         <div ref={ref} className={styles.trigger}>
-          Загрузка...
+          {isLoadingUser ? 'Загрузка...' : 'Загрузка...'}
         </div>
       )}
     </>
