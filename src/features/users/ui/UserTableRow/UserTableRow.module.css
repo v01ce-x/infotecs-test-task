@@ -1,0 +1,12 @@
+.userRow {
+    cursor: pointer;
+    transition: 0.3s;
+
+    &:hover {
+        background-color: var(--color-surface-hover);
+    }
+
+    &:active {
+        background-color: var(--color-surface);
+    }
+}

@@ -1,13 +1,13 @@
 import type { User } from '@/features/users';
 import { getNestedValue } from '@/shared/utils';
-import style from './UserCell.module.css';
+import styles from './UserTableCell.module.css';
 
 interface Props {
   id: string;
   user: User;
 }
 
-const UserCell = (props: Props) => {
+const UserTableCell = (props: Props) => {
   const { id, user } = props;
 
   const value = getNestedValue(user, id);
@@ -17,10 +17,10 @@ const UserCell = (props: Props) => {
       {value ? (
         <span>{value}</span>
       ) : (
-        <span className={style.notSpecified}>Not specified</span>
+        <span className={styles.notSpecified}>Not specified</span>
       )}
     </td>
   );
 };
 
-export default UserCell;
+export default UserTableCell;

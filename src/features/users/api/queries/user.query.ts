@@ -16,11 +16,13 @@ export const getUsers = async (
   }
   try {
     const param = new URLSearchParams();
+
     if (filterParam.trim()) {
       param.append('q', filterParam);
     } else {
       param.delete('q');
     }
+
     if (sortingParam.key) {
       param.append('sortBy', sortingParam.key);
       param.append('order', sortingParam.value);

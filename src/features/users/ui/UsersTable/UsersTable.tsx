@@ -1,17 +1,18 @@
 import { useEffect, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
 import {
   type ApiUsersResponse,
-  getUsers,
-  LIMIT_QUERY,
+  type User,
   type Sort,
   TABLE_HEADERS,
-  type User,
+  LIMIT_QUERY,
+  getUsers,
+  UserTableRow,
+  TitleTable,
 } from '@/features/users';
-import styles from './UsersTable.module.css';
-import { FieldInput, TitleTable, UserCell } from '@/shared/ui';
-import Skeleton from '@/shared/ui/Skeleton/Skeleton.tsx';
-import { useInView } from 'react-intersection-observer';
+import { FieldInput, Skeleton } from '@/shared/ui';
 import { useDebounce } from '@/shared/hooks';
+import styles from './UsersTable.module.css';
 
 const UsersTable = () => {
   const [allUsers, setAllUsers] = useState<User[]>([]);
@@ -24,9 +25,7 @@ const UsersTable = () => {
     key: '',
     value: 'none',
   });
-
   const [filterParam, setFilterParam] = useState('');
-
   const debounceFilter = useDebounce(filterParam, 500);
 
   const { ref, inView } = useInView({
@@ -70,10 +69,8 @@ const UsersTable = () => {
 
         handleUsersLoad(data, totalPage);
       })
-      .catch((error) => {
+      .catch(() => {
         if (cancelled) return;
-
-        console.error(error);
       })
       .finally(() => {
         setIsLoadingUser(false);
@@ -113,11 +110,7 @@ const UsersTable = () => {
         ) : (
           <tbody>
             {allUsers.map((user) => (
-              <tr key={user.id}>
-                {Object.entries(TABLE_HEADERS).map(([id]) => (
-                  <UserCell key={id} id={id} user={user} />
-                ))}
-              </tr>
+              <UserTableRow key={user.id} user={user} />
             ))}
           </tbody>
         )}
@@ -125,7 +118,7 @@ const UsersTable = () => {
 
       {hasMore && allUsers.length > 0 && (
         <div ref={ref} className={styles.trigger}>
-          {isLoadingUser ? 'Загрузка...' : 'Загрузка...'}
+          'Загрузка...'
         </div>
       )}
     </>
