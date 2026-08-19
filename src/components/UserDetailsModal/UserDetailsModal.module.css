@@ -1,0 +1,49 @@
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+
+    width: 100vw;
+    height: 100vh;
+
+    background-color: var(--color-outside)
+}
+
+.modal__inner {
+    display: grid;
+
+    background-color: var(--color-bg);
+
+    padding: 20px;
+    row-gap: 20px;
+
+    border-radius: 8px;
+}
+
+.modal__header {
+    display: flex;
+    gap: 8px;
+}
+
+.icon {
+    width: 32px;
+    height: 32px;
+
+    padding: 4px;
+
+    cursor: pointer;
+    transition: 0.5s;
+
+    &:hover {
+        transform: rotate(90deg) scale(1.2);
+    }
+
+    &:active {
+        transform: rotate(0deg) scale(0.9);
+    }
+}

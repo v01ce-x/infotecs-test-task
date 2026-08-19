@@ -9,8 +9,9 @@
     --color-shimmer-blur: #f1f5f9;
 
     --color-primary: #1abc9f;
-    --color-primary-soft: rgba(26, 188, 159, 0.14);
+    --color-primary-soft: rgba(26 188 159 / 0.14);
     --color-error: #ef4444;
+    --color-outside: rgb(0 0 0 / 0.3);
 }
 
 [data-theme="dark"] {
@@ -22,4 +23,5 @@
     --color-border: #242b3d;
     --color-shimmer-base: rgb(31 38 53 / 0.1);
     --color-shimmer-blur: rgb(42 52 74 / 0.2);
+
 }

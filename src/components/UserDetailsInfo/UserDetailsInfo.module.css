@@ -1,0 +1,10 @@
+.userDetails {
+    display: grid;
+
+    gap: 8px;
+}
+
+.userDetails__avatar {
+    display: flex;
+    justify-content: center;
+}

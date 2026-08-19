@@ -1,4 +1,4 @@
-import { UsersTable } from '@/features/users';
+import { UsersTable } from '@/components';
 
 const App = () => {
   return (
