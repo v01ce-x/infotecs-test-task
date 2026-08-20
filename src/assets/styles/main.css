@@ -3,6 +3,9 @@
 
 th, td {
     border: 1px solid var(--color-border);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 td {

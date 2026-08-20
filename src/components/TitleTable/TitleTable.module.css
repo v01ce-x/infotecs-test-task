@@ -1,5 +1,6 @@
 .cell {
     position: relative;
+    overflow: visible;
 }
 
 .cell__wrapper {
@@ -77,4 +78,21 @@
 
 .sorting__none {
     fill: var(--color-border);
+}
+
+.cell__resizer {
+    position: absolute;
+    top: 0;
+    right: -3px;
+    z-index: 5;
+
+    width: 6px;
+    height: 100%;
+
+    cursor: col-resize;
+    transition: background-color 0.15s ease;
+
+    &:hover {
+        background-color: var(--color-primary);
+    }
 }

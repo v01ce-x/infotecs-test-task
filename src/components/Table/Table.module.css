@@ -1,6 +1,15 @@
-.table {
+.tableWrapper {
     max-width: 1400px;
     width: 100%;
 
     margin: 8px;
+
+    border: 1px solid var(--color-border);
+    overflow-x: auto;
+    scrollbar-color: var(--color-bg) var(--color-primary-soft);
+}
+
+.table {
+    width: 100%;
+    table-layout: fixed;
 }
