@@ -10,7 +10,7 @@ import {
 } from '@/entities/users';
 import { FieldInput } from '@/shared/ui';
 import { useDebounce } from '@/shared/hooks';
-import { LIMIT_QUERY } from '@/shared/utils';
+import { LIMIT_QUERY, scrollControl } from '@/shared/utils';
 import styles from './UsersTable.module.css';
 
 const UsersTable = () => {
@@ -92,6 +92,10 @@ const UsersTable = () => {
     };
   }, [totalPage, debounceFilter, sortingParam.key, sortingParam.value]);
 
+  useEffect(() => {
+    scrollControl(isOpenModal);
+  }, [isOpenModal]);
+
   return (
     <>
       <div>
@@ -101,7 +105,6 @@ const UsersTable = () => {
         />
       </div>
 
-      {isLoadingUserDetails.toString()}
       <Table
         isLoadingUser={isLoadingUser}
         allUsers={allUsers}

@@ -31,7 +31,7 @@ const userDetailsModal = (props: Props) => {
             >
               <div className={styles.modal__header}>
                 <CrossIcon className={styles.icon} onClick={closeModal} />
-                <h2>Дательная информация о пользователя</h2>
+                <h2>Детальная информация о пользователя</h2>
               </div>
 
               <UserDetailsInfo user={userDetails} />
