@@ -1,75 +1,59 @@
-# React + TypeScript + Vite
+# Таблица Пользователей (React + TypeScript)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+---
 
-Currently, two official plugins are available:
+## 🚀 Быстрый запуск
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Для запуска проекта на локальной машине выполните следующие шаги:
 
-## React Compiler
+### 1. Настройка переменных окружения
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+В корневом каталоге проекта находится файл настроек `.env.example`. Для работы приложения необходимо перенести базовую ссылку API в рабочий конфигурационный файл:
 
-## Expanding the ESLint configuration
+1. Создайте в корне проекта новый файл с именем `.env`
+2. Скопируйте в него содержимое из `.env.example`:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```env
+VITE_API_URL=https://dummyjson.com
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 2. Установка зависимостей
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Установите все необходимые для работы библиотеки и пакеты из `package.json`. В зависимости от используемого пакетного менеджера выполните команду в терминале:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+# Если используете npm
+npm install
 
+# Если используете pnpm
+pnpm install
+
+# Если используете yarn
+yarn install
 ```
+
+### 3. Запуск приложения в режиме разработки
+
+После успешной установки зависимостей запустите локальный сервер разработки:
+
+```bash
+# Если используете npm
+npm run dev
+
+# Если используете pnpm
+pnpm dev
+
+# Если используете yarn
+yarn dev
+```
+
+После запуска терминал выведет локальный адрес (обычно `http://localhost:5173`). Откройте его в браузере для просмотра приложения.
+
+---
+
+## 🛠️ Стек технологий
+
+* **Фронтенд:** React, TypeScript
+* **Стилизация:** CSS Modules
+* **Инструменты:** Vite
+* **Сетевой клиент:** Чистый Fetch API
