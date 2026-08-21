@@ -1,6 +1,7 @@
 import { type User, UserTableCell } from '@/entities/users';
 import styles from './UserTableRow.module.css';
 import { TABLE_HEADERS } from '@/shared/utils';
+import { memo } from 'react';
 
 interface Props {
   user: User;
@@ -19,4 +20,4 @@ const UserTableRow = (props: Props) => {
   );
 };
 
-export default UserTableRow;
+export default memo(UserTableRow);

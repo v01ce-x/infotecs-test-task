@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { memo, useRef, useState } from 'react';
 import * as React from 'react';
 import { TitleTable } from '@/components';
 import { type Sort, type User, UserTableRow } from '@/entities/users';
@@ -76,13 +76,6 @@ const UsersTable = (props: Props) => {
     document.removeEventListener('mouseup', handleResizeEnd);
   };
 
-  useEffect(() => {
-    return () => {
-      document.removeEventListener('mousemove', handleResizeMove);
-      document.removeEventListener('mouseup', handleResizeEnd);
-    };
-  }, []);
-
   return (
     <div className={styles.tableWrapper}>
       <table className={styles.table}>
@@ -110,7 +103,7 @@ const UsersTable = (props: Props) => {
               <UserTableRow
                 key={user.id}
                 user={user}
-                onClick={(id: number) => openUserDetails(id)}
+                onClick={openUserDetails}
               />
             ))}
           </tbody>
@@ -120,4 +113,4 @@ const UsersTable = (props: Props) => {
   );
 };
 
-export default UsersTable;
+export default memo(UsersTable);

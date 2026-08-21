@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { UsersTable, UserDetailsModal } from '@/components';
 import { type User, type Sort, useUsers, userService } from '@/entities/users';
@@ -32,7 +32,7 @@ const UsersPage = () => {
     hasMore,
   } = useUsers({ filter: debounceFilter, sortingParam, inView });
 
-  const openUserDetails = (id: number) => {
+  const openUserDetails = useCallback((id: number) => {
     setIsLoadingUserDetails(true);
     setIsOpenModal(true);
 
@@ -40,7 +40,7 @@ const UsersPage = () => {
       setUserDetails(user);
       setIsLoadingUserDetails(false);
     });
-  };
+  }, []);
 
   useEffect(() => {
     scrollControl(isOpenModal);
@@ -61,7 +61,7 @@ const UsersPage = () => {
         totalPage={totalPage}
         sortingParam={sortingParam}
         setSortingParam={(newSorting) => setSortingParam(newSorting)}
-        openUserDetails={(id: number) => openUserDetails(id)}
+        openUserDetails={openUserDetails}
       />
 
       {hasMore && users.length > 0 && (
