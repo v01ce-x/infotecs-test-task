@@ -26,3 +26,12 @@ export const TABLE_HEADERS = {
   'address.country': 'Страна',
   'address.city': 'Город',
 };
+
+export const ADDRESS_LABELS = {
+  address: 'Адрес',
+  city: 'Город',
+  state: 'Государство',
+  stateCode: 'Код государства',
+  postalCode: 'Почтовый индекс',
+  country: 'Страна',
+};

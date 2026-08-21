@@ -7,12 +7,12 @@ const skipUser = (totalPage: number) => {
 };
 
 export const userService = {
-  users: (totalPage: number, queryParam: string) => {
+  getAll: (totalPage: number, queryParam: string) => {
     const param = `/search?${queryParam}&${skipUser(totalPage)}`;
 
     return apiFetch('/users', param);
   },
 
-  detailsUser: (userId: number) =>
-    apiFetch(`/users/${userId}`).then((response: User) => response),
+  getById: (id: number) =>
+    apiFetch(`/users/${id}`).then((response: User) => response),
 };

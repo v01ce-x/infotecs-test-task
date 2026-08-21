@@ -86,15 +86,13 @@ const TitleTable = (props: Props) => {
                 exit={{ opacity: 0, y: 10, scale: 0.95 }}
                 transition={{ duration: 0.15, ease: 'easeInOut' }}
               >
-                {Object.entries(VARIANTS_SORTING).map((variantSorting) => (
+                {Object.entries(VARIANTS_SORTING).map(([sort, label]) => (
                   <span
-                    key={variantSorting[0]}
+                    key={sort}
                     className={styles.sorting__value}
-                    onClick={() =>
-                      setSorting(variantSorting[0] as SortingVariants)
-                    }
+                    onClick={() => setSorting(sort as SortingVariants)}
                   >
-                    {variantSorting[1]}
+                    {label}
                   </span>
                 ))}
               </motion.div>

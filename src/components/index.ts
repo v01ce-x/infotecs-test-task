@@ -1,5 +1,5 @@
 export * from './UserDetailsInfo';
 export * from './TitleTable';
-export * from './UsersTable';
+export * from './UsersPage';
 export * from './UserDetailsModal';
-export * from './Table';
+export * from './UsersTable';

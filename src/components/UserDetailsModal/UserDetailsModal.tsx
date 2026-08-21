@@ -7,18 +7,18 @@ import styles from './UserDetailsModal.module.css';
 interface Props {
   closeModal: () => void;
   isOpenModal: boolean;
-  isLoadingUserDetails: boolean;
-  userDetails: User | undefined;
+  isLoading: boolean;
+  user?: User;
 }
 
 const userDetailsModal = (props: Props) => {
-  const { userDetails, closeModal, isOpenModal, isLoadingUserDetails } = props;
+  const { user, closeModal, isOpenModal, isLoading } = props;
 
   return (
     <AnimatePresence>
       {isOpenModal && (
         <div className={styles.modal} onClick={closeModal}>
-          {isLoadingUserDetails ? (
+          {isLoading ? (
             <Loader />
           ) : (
             <motion.div
@@ -34,7 +34,7 @@ const userDetailsModal = (props: Props) => {
                 <h2>Детальная информация о пользователя</h2>
               </div>
 
-              <UserDetailsInfo user={userDetails} />
+              {user && <UserDetailsInfo user={user} />}
             </motion.div>
           )}
         </div>

@@ -1,132 +1,122 @@
-import { useEffect, useState } from 'react';
-import { useInView } from 'react-intersection-observer';
-import { Table, UserDetailsModal } from '@/components';
-import {
-  type User,
-  type Sort,
-  getUsers,
-  getDetailsUser,
-  type ApiUsersResponse,
-} from '@/entities/users';
-import { FieldInput } from '@/shared/ui';
-import { useDebounce } from '@/shared/hooks';
-import { LIMIT_QUERY, scrollControl } from '@/shared/utils';
+import { useEffect, useRef, useState } from 'react';
+import * as React from 'react';
+import { TitleTable } from '@/components';
+import { type Sort, type User, UserTableRow } from '@/entities/users';
+import { TABLE_HEADERS } from '@/shared/utils';
+import { Skeleton } from '@/shared/ui';
 import styles from './UsersTable.module.css';
 
-const UsersTable = () => {
-  const [allUsers, setAllUsers] = useState<User[]>([]);
-  const [isLoadingUser, setIsLoadingUser] = useState(true);
+interface Props {
+  isLoading: boolean;
+  users: User[];
+  totalPage: number;
+  sortingParam: Sort;
+  setSortingParam: (newSorting: Sort) => void;
+  openUserDetails: (id: number) => void;
+}
 
-  const [userDetails, setUserDetails] = useState<User>();
-  const [isLoadingUserDetails, setIsLoadingUserDetails] = useState(false);
+const UsersTable = (props: Props) => {
+  const {
+    isLoading,
+    users,
+    totalPage,
+    sortingParam,
+    setSortingParam,
+    openUserDetails,
+  } = props;
 
-  const [totalPage, setTotalPage] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
-  const [isOpenModal, setIsOpenModal] = useState(false);
-
-  const [sortingParam, setSortingParam] = useState<Sort>({
-    key: '',
-    value: 'none',
+  const [colWidths, setColWidths] = useState<Record<string, number>>({
+    lastName: 150,
+    firstName: 150,
+    maidenName: 150,
+    age: 80,
+    gender: 100,
+    phone: 180,
+    email: 310,
+    'address.country': 80,
+    'address.city': 80,
   });
-  const [filterParam, setFilterParam] = useState('');
-  const debounceFilter = useDebounce(filterParam, 500);
 
-  const { ref, inView } = useInView({
-    threshold: 0.5,
-    triggerOnce: false,
-  });
+  const resizeInfo = useRef<{
+    activeId: string;
+    startWidth: number;
+    startX: number;
+  } | null>(null);
 
-  const handleUsersLoad = (data: ApiUsersResponse, page: number) => {
-    const users = data.users ?? [];
-
-    if (page === 0) {
-      setAllUsers(users);
-    } else {
-      setAllUsers((prev) => [...prev, ...users]);
-    }
-
-    setHasMore(data.total > LIMIT_QUERY * (page + 1));
-  };
-
-  const openDetailsUser = (id: number) => {
-    setIsLoadingUserDetails(true);
-    setIsOpenModal(true);
-
-    getDetailsUser(id).then((user) => {
-      setUserDetails(user);
-      setIsLoadingUserDetails(false);
-    });
-  };
-
-  useEffect(() => {
-    if (inView && hasMore && !isLoadingUser) {
-      setTotalPage((prev) => prev + 1);
-    }
-  }, [inView, isLoadingUser]);
-
-  useEffect(() => {
-    setAllUsers([]);
-    setTotalPage(0);
-    setHasMore(true);
-    setIsLoadingUser(true);
-  }, [debounceFilter, sortingParam.key, sortingParam.value]);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    setIsLoadingUser(true);
-
-    getUsers(totalPage, sortingParam, debounceFilter)
-      .then((data: ApiUsersResponse) => {
-        if (cancelled) return;
-
-        handleUsersLoad(data, totalPage);
-        setIsLoadingUser(false);
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setIsLoadingUser(false);
-      });
-    return () => {
-      cancelled = true;
+  const handleResizeStart = (id: string, event: React.MouseEvent) => {
+    resizeInfo.current = {
+      activeId: id,
+      startWidth: colWidths[id],
+      startX: event.clientX,
     };
-  }, [totalPage, debounceFilter, sortingParam.key, sortingParam.value]);
+
+    document.addEventListener('mousemove', handleResizeMove);
+    document.addEventListener('mouseup', handleResizeEnd);
+  };
+
+  const handleResizeMove = (event: MouseEvent) => {
+    if (!resizeInfo.current) return;
+
+    const minWidthCell = 50;
+
+    const { activeId, startWidth, startX } = resizeInfo.current;
+    const deltaX = event.clientX - startX;
+
+    const newWidth = Math.max(minWidthCell, startWidth + deltaX);
+
+    setColWidths((prev) => ({
+      ...prev,
+      [activeId]: newWidth,
+    }));
+  };
+
+  const handleResizeEnd = () => {
+    resizeInfo.current = null;
+    document.removeEventListener('mousemove', handleResizeMove);
+    document.removeEventListener('mouseup', handleResizeEnd);
+  };
 
   useEffect(() => {
-    scrollControl(isOpenModal);
-  }, [isOpenModal]);
+    return () => {
+      document.removeEventListener('mousemove', handleResizeMove);
+      document.removeEventListener('mouseup', handleResizeEnd);
+    };
+  }, []);
 
   return (
-    <>
-      <div>
-        Поиск по таблице. Только поля ФИО и email
-        <FieldInput
-          onChange={(newFilterValue: string) => setFilterParam(newFilterValue)}
-        />
-      </div>
+    <div className={styles.tableWrapper}>
+      <table className={styles.table}>
+        <thead>
+          <tr>
+            {Object.entries(TABLE_HEADERS).map(([id, title]) => (
+              <TitleTable
+                key={id}
+                id={id}
+                title={title}
+                sorting={sortingParam}
+                onClick={(newSorting: Sort) => setSortingParam(newSorting)}
+                width={colWidths[id]}
+                onResizeStart={handleResizeStart}
+              />
+            ))}
+          </tr>
+        </thead>
 
-      <Table
-        isLoadingUser={isLoadingUser}
-        allUsers={allUsers}
-        totalPage={totalPage}
-        sortingParam={sortingParam}
-        setSortingParam={(newSorting) => setSortingParam(newSorting)}
-        openDetailsUser={(id: number) => openDetailsUser(id)}
-      />
-
-      {hasMore && allUsers.length > 0 && (
-        <div ref={ref} className={styles.trigger}>
-          'Загрузка...'
-        </div>
-      )}
-
-      <UserDetailsModal
-        closeModal={() => setIsOpenModal(false)}
-        isOpenModal={isOpenModal}
-        userDetails={userDetails}
-        isLoadingUserDetails={isLoadingUserDetails}
-      />
-    </>
+        {isLoading && totalPage === 0 ? (
+          <Skeleton />
+        ) : (
+          <tbody>
+            {users.map((user) => (
+              <UserTableRow
+                key={user.id}
+                user={user}
+                onClick={(id: number) => openUserDetails(id)}
+              />
+            ))}
+          </tbody>
+        )}
+      </table>
+    </div>
   );
 };
 

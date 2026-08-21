@@ -1,9 +1,9 @@
-import { UsersTable } from '@/components';
+import { UsersPage } from '@/components';
 
 const App = () => {
   return (
     <div className="wrapper">
-      <UsersTable />
+      <UsersPage />
     </div>
   );
 };
